@@ -405,41 +405,26 @@ class Home extends CI_Controller
      */
     public function login()
     {
-
-        $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/';
         $this->data['title'] = $this->lang->line('login_heading');
+        $this->response['csrfName'] = $this->security->get_csrf_token_name();
+        $this->response['csrfHash'] = $this->security->get_csrf_hash();
 
-        $_POST['identity'] = isset($_POST['mobile']) && !empty($_POST['mobile']) ? $_POST['mobile'] : (isset($_POST['email']) && !empty($_POST['email']) ? $_POST['email'] : '');
-
-        $identity_column = $this->config->item('identity', 'ion_auth');
-
-
-        // validate form input
-        if (preg_match($regex, $_POST['identity'])) {
-            $this->form_validation->set_rules('identity', ucfirst($identity_column), 'trim|required|valid_email|xss_clean');
-        } else {
-            $this->form_validation->set_rules('identity', ucfirst($identity_column), 'required|numeric|xss_clean');
+        $identity = trim((string) $this->input->post('identity', true));
+        if ($identity === '') {
+            $identity = trim((string) $this->input->post('email', true));
         }
 
+        $_POST['identity'] = $identity;
+
+        // Front-end customer login now uses email + password only.
+        $this->form_validation->set_rules('identity', 'Email', 'trim|required|valid_email|xss_clean');
         $this->form_validation->set_rules('password', str_replace(':', '', $this->lang->line('login_password_label')), 'required|xss_clean');
 
         if ($this->form_validation->run() === TRUE) {
             $tables = $this->config->item('tables', 'ion_auth');
-            $identity = $this->input->post('identity', true);
-
-            // Determine if login is by email or mobile and set identity column FIRST
-            $is_email_login = false;
-            if (filter_var($identity, FILTER_VALIDATE_EMAIL) || (isset($_POST['type']) && $_POST['type'] != 'phone')) {
-                // Email login
-                $is_email_login = true;
-                $this->ion_auth->ion_auth_model->identity_column = 'email';
-                $res = $this->db->select('id')->where('email', $identity)->get($tables['login_users'])->result_array();
-                $user_data = fetch_details('users', ['email' => $identity]);
-            } else {
-                // Phone/Mobile login
-                $res = $this->db->select('id')->where($identity_column, $identity)->get($tables['login_users'])->result_array();
-                $user_data = fetch_details('users', ['mobile' => $identity]);
-            }
+            $this->ion_auth->ion_auth_model->identity_column = 'email';
+            $res = $this->db->select('id')->where('email', $identity)->get($tables['login_users'])->result_array();
+            $user_data = fetch_details('users', ['email' => $identity]);
 
             if (isset($user_data[0]['active']) && !empty($user_data) && $user_data[0]['active'] == 0) {
                 $this->response['error'] = true;
@@ -453,11 +438,11 @@ class Home extends CI_Controller
                 // check for "remember me"
                 $remember = (bool) $this->input->post('remember');
 
-                if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember)) {
+                if ($this->ion_auth->login($identity, $this->input->post('password'), $remember)) {
 
                     //if the login is successful
                     if (!$this->input->is_ajax_request()) {
-                        redirect('admin/home', 'refresh');
+                        redirect('my-account', 'refresh');
                     }
                     $this->response['error'] = false;
                     $this->response['message'] = $this->ion_auth->messages();
@@ -466,17 +451,12 @@ class Home extends CI_Controller
 
                     // if the login was un-successful
                     $this->response['error'] = true;
-                    // Dynamic error message based on login type
-                    if ($is_email_login) {
-                        $this->response['message'] = 'Your email or password is incorrect';
-                    } else {
-                        $this->response['message'] = 'Your mobile or password is incorrect';
-                    }
+                    $this->response['message'] = 'Your email or password is incorrect';
                     echo json_encode($this->response);
                 }
             } else {
                 $this->response['error'] = true;
-                $this->response['message'] = '<div>Incorrect Login</div>';
+                $this->response['message'] = 'Your email or password is incorrect';
                 echo json_encode($this->response);
             }
         } else {

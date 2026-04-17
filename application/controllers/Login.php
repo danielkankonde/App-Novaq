@@ -73,9 +73,10 @@ class Login extends CI_Controller
             return false;
         }
 
-        $identity_column = $this->config->item('identity', 'ion_auth');
+        $identity_column = $this->session->userdata('login_identity_column') ?: $this->config->item('identity', 'ion_auth');
         $identity = $this->session->userdata('identity');
         $user = $this->ion_auth->user()->row();
+        $this->ion_auth->ion_auth_model->identity_column = $identity_column;
 
         if ($identity_column == 'email') {
             $this->form_validation->set_rules('email', 'Email', 'required|xss_clean|trim|valid_email|edit_unique[users.email.' . $user->id . ']');
@@ -190,7 +191,7 @@ class Login extends CI_Controller
             }
 
             $user_details = escape_array($user_details);
-            $this->db->set($user_details)->where($identity_column, $identity)->update($tables['login_users']);
+            $this->db->set($user_details)->where('id', $user->id)->update($tables['login_users']);
             $this->response['error'] = false;
             $this->response['message'] = 'Profile updated successfully';
             echo json_encode($this->response);

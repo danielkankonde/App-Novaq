@@ -128,40 +128,8 @@ $signUpForm = 'style="display:none"';
             <!-- login section-->
             <div id="login-text" class="col-md-6 px-5 login-section">
                 <h4 class="mb-3 section-title"><?= label('login', 'LOGIN') ?></h4>
-                
-                <!-- Mobile Login Form -->
-                <div id="mobile-form">
+                <div id="email-form">
                     <form id='login_form' class='form-submit-event' method="POST" action='<?= base_url('home/login') ?>'>
-                        <div class="mb-3 login-mobile-no">
-                            <label for="exampleFormUsername" class="form-label">
-                                <p class="form-lable"><?= label('mobile_number', 'Mobile Number') ?><sup
-                                        class="text-danger fw-bold">*</sup></p>
-                            </label>
-                            <input type="text" class="form-control" name="identity" placeholder="Enter Mobile Number" 
-                                pattern="\d*" required>
-                        </div>
-                        <div class="mb-3 login-mobile-no">
-                            <label for="exampleFormUsername" class="form-label">
-                                <p class="form-lable"><?= label('password', 'Password') ?><sup
-                                        class="text-danger fw-bold">*</sup></p>
-                            </label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" name="password" placeholder="Password" required>
-                                <button type="button" class="btn btn-outline-secondary togglePassword">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div id='error_box' class='text-center text-danger'></div>
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-primary login-submit-btn submit_btn"><?= label('login', 'Login') ?></button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Email Login Form -->
-                <div id="email-form" class="d-none">
-                    <form id='login_form_email' class='form-submit-event' method="POST" action='<?= base_url('home/login') ?>'>
                         <div class="mb-3 login-mobile-no">
                             <label for="exampleFormUsername" class="form-label">
                                 <p class="form-lable"><?= label('email', 'Email') ?><sup
@@ -181,22 +149,12 @@ $signUpForm = 'style="display:none"';
                                 </button>
                             </div>
                         </div>
-                        <div id='error_box_email' class='text-center text-danger'></div>
+                        <div id='error_box' class='text-center text-danger'></div>
                         <div class="mb-3">
                             <button type="submit" class="btn btn-primary login-submit-btn submit_btn"><?= label('login', 'Login') ?></button>
                         </div>
                     </form>
                 </div>
-
-                <!-- Toggle Links -->
-                <?php if ((!empty($system_settings['email_login']) && $system_settings['email_login'] == 1)) { ?>
-                <div class="mb-3 mt-3 login-email-login">
-                    <a href="#" id="login-emailLogin" class="text-decoration-underline">Login with Email?</a>
-                </div>
-                <div class="mb-3 mt-3 login-phone-login d-none">
-                    <a href="#" id="login-phoneLogin" class="text-decoration-underline">Login with Phone?</a>
-                </div>
-                <?php } ?>
 
                 <!-- Forgot Password Links -->
                 <div class="text-center mt-3">

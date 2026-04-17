@@ -156,32 +156,15 @@ $signUpForm = 'style="display:none"';
             <div class="col-md-6 px-5 login-section" style="display:<?php echo $registrationSectionDisplay; ?>;">
                 <h4 class="mb-3 section-title"><?= label('login', 'LOGIN') ?></h4>
                 <form action="<?= base_url('home/login') ?>" class='form-submit-event' id="login_form" method="post">
-                    <div id="mobile-form" class="mobile-form">
-                        <div class="mb-3">
-                            <label for="Username" class="form-label">
-                                <p class="form-lable"> <?= label('mobile_number', 'Mobile Number') ?> <sup
-                                        class="text-danger fw-bold">*</sup></p>
-                            </label>
-                            <input type="number" class="form-control" name="identity" pattern="\d*" maxlength="16"
-                                placeholder="<?= label('mobile_number', 'Mobile number') ?>" <?= (ALLOW_MODIFICATION == 0) ? 'value="9876543210"' : ""; ?>
-                                required>
-                        </div>
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">
+                            <p class="form-lable"> <?= label('email', 'Email') ?> <sup
+                                    class="text-danger fw-bold">*</sup></p>
+                        </label>
+                        <input type="email" class="form-control" name="identity"
+                            placeholder="<?= label('email_address', 'Email address') ?>" <?= (ALLOW_MODIFICATION == 0) ? 'value="demo@example.com"' : ""; ?>
+                            required>
                     </div>
-                    <div id="email-form" class="email-form d-none">
-                        <div class="mb-3">
-                            <label for="Email" class="form-label">
-                                <p class="form-lable"> <?= label('email', 'Email') ?> <sup
-                                        class="text-danger fw-bold">*</sup></p>
-                            </label>
-                            <input type="email" class="form-control" name="email" 
-                                placeholder="<?= label('email_address', 'Email address') ?>">
-                        </div>
-                    </div>
-                    <?php if ((!empty($system_settings['email_login']) && $system_settings['email_login'] == 1)) { ?>
-                    <div class="mb-3 mt-3">
-                        <a href="#" id="login-phoneLogin" class="text-decoration-underline login-phone-login d-none"><?= label('login_with_phone', 'Login with Phone?') ?></a>
-                    </div>
-                    <?php } ?>
                     <div class="mb-3">
                         <label for="setpassword" class="form-label">
                             <p class="form-lable"><?= label('password', 'Password') ?> <sup
@@ -218,23 +201,6 @@ $signUpForm = 'style="display:none"';
                     <?php if ((!empty($system_settings['email_login']) && $system_settings['email_login'] == 1)) {
                         ?>
                         <div class="d-flex justify-content-around my-2">
-                                            <?php if ((!empty($system_settings['email_login']) && $system_settings['email_login'] == 1)) { ?>
-                            <a href="#" id="login-emailLogin-btn" class="emailLogin">
-                                <div class="thirdparty-login">
-                                    <img src="<?= base_url('assets/front_end/modern/image/pictures/mail.png') ?> "
-                                        alt="">
-                                    <p class="m-0"><?= label('Email', 'Email') ?></p>
-                                </div>
-                            </a>
-
-                            <a href="#" id="login-phoneLogin-btn" class="phoneLogin d-none">
-                                <div class="thirdparty-login">
-                                    <img src="<?= base_url('assets/front_end/modern/image/pictures/telephone.png') ?> "
-                                        alt="">
-                                    <p class="m-0"><?= label('Phone', 'Phone') ?></p>
-                                </div>
-                            </a>
-                            <?php } ?>
                             <?php if (!empty($system_settings['google_login']) && $system_settings['google_login'] != '' && ($system_settings['google_login'] == 1 || $system_settings['google_login'] = '1')) { ?>
                                 <input type="hidden" id="web_fcm" name="web_fcm" value="">
                                 <a href="#" id="googleLogin">
@@ -269,7 +235,7 @@ $signUpForm = 'style="display:none"';
             <div class="col-md-6 px-5 text-center Register-text">
                 <div class="login-text" id="login-text">
                     <h4 class="mb-3 section-title"><?= label('login', 'LOGIN') ?></h4>
-                    <p class="mb-3"><?= label('login_description', 'To access your account and enjoy a seamless shopping experience, simply enter your registered Mobile Number and password in the designated fields. Once logged in, you\'ll have access to your personalized dashboard, order history, saved payment methods, and more.') ?>
+                    <p class="mb-3"><?= label('login_description', 'To access your account and enjoy a seamless shopping experience, simply enter your registered email address and password in the designated fields. Once logged in, you\'ll have access to your personalized dashboard, order history, saved payment methods, and more.') ?>
                     </p>
                     <button type="button" class="btn login-register-btn login-btn fw-bold"><?= label('login', 'Login') ?></button>
                 </div>

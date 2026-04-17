@@ -7,25 +7,13 @@
     </div>
     <div class="offcanvas-body">
         <form action="<?= base_url('home/login') ?>" class='form-submit-event' id="login_form" method="post">
-            <div id="login-mobile-form" class="mobile-form">
-                <div class="mb-3">
-                    <label for="Username" class="form-label">
-                        <p class="form-lable"> <?= label('mobile_number', 'Mobile Number') ?> <sup
-                                class="text-danger fw-bold">*</sup></p>
-                    </label>
-                    <input type="text" class="form-control" name="mobile" pattern="\d*" maxlength="16"
-                        placeholder="<?= label('mobile_number', 'Mobile number') ?>" <?= (ALLOW_MODIFICATION == 0) ? 'value="9876543210"' : ""; ?>>
-                </div>
-            </div>
-            <div id="login-email-form" class="email-form d-none">
-                <div class="mb-3">
-                    <label for="email-login" class="form-label">
-                        <p class="form-lable"> <?= label('email', 'Email') ?> <sup class="text-danger fw-bold">*</sup>
-                        </p>
-                    </label>
-                    <input type="email" class="form-control login-email" name="email"
-                        placeholder="<?= label('email', 'Email') ?>" <?= (ALLOW_MODIFICATION == 0) ? 'value="demo@example.com"' : ""; ?>>
-                </div>
+            <div class="mb-3">
+                <label for="email-login" class="form-label">
+                    <p class="form-lable"> <?= label('email', 'Email') ?> <sup class="text-danger fw-bold">*</sup>
+                    </p>
+                </label>
+                <input type="email" class="form-control login-email" name="identity"
+                    placeholder="<?= label('email', 'Email') ?>" <?= (ALLOW_MODIFICATION == 0) ? 'value="demo@example.com"' : ""; ?> required>
             </div>
             <div class="mb-3">
                 <label for="setpassword" class="form-label">
@@ -51,7 +39,7 @@
             </div>
             <div class="d-flex justify-content-between">
                 <div class="form-check">
-                    <input class="form-check-input border-active" type="checkbox" value="" id="flexCheckDefault">
+                    <input class="form-check-input border-active" type="checkbox" value="1" id="flexCheckDefault" name="remember">
                     <label class="form-check-label p-0 w-auto" for="flexCheckDefault">
                         <?= label('remember_me', 'Remember Me') ?>
                     </label>
@@ -65,18 +53,6 @@
                 <span></span>
             </div>
             <div class="d-flex justify-content-around my-2">
-                <a href="#" id="login-canvas-emailLogin-btn" class="emailLogin">
-                    <div class="thirdparty-login">
-                        <img src="<?= base_url('assets/front_end/modern/image/pictures/mail.png') ?> " alt="">
-                        <p class="m-0"><?= label('Email', 'Email') ?></p>
-                    </div>
-                </a>
-                <a href="#" id="login-canvas-phoneLogin-btn" class="phoneLogin d-none">
-                    <div class="thirdparty-login">
-                        <img src="<?= base_url('assets/front_end/modern/image/pictures/telephone.png') ?> " alt="">
-                        <p class="m-0"><?= label('Phone', 'Phone') ?></p>
-                    </div>
-                </a>
                 <?php if ((!empty($system_settings['google_login']) && $system_settings['google_login'] == 1)) { ?>
                     <?php if (!empty($system_settings['google_login']) && $system_settings['google_login'] != '' && ($system_settings['google_login'] == 1 || $system_settings['google_login'] = '1')) { ?>
                         <a href="#" id="googleLogin">

@@ -292,24 +292,9 @@
             class="active"><?= !empty($this->lang->line('register')) ? $this->lang->line('register') : 'Register' ?></a>
     </header>
     <section class="hide" id="login_div">
-        <?php if ((!empty($system_settings['email_login']) && $system_settings['email_login'] == 1)) { ?>
-            <div class="mb-3 mt-3">
-                <a href="#" id="login-canvas-emailLogin" class="text-decoration-underline emailLogin">Login with Email?</a>
-            </div>
-        <?php } ?>
-        <?php if ((!empty($system_settings['email_login']) && $system_settings['email_login'] == 1)) { ?>
-            <div class="mb-3 mt-3">
-                <a href="#" id="phoneLogin" class="text-decoration-underline phoneLogin d-none">Login with Phone?</a>
-            </div>
-        <?php } ?>
         <form action="<?= base_url('home/login') ?>" class='form-submit-event' id="login_form" method="post">
-            <div class="input-group" id="login-mobile-form">
-                <input type="text" class="form-control" name="mobile" pattern="\d*" maxlength="16"
-                    placeholder="Mobile number">
-            </div>
-
-            <div class="input-group d-none" id="login-email-form">
-                <input type="email" class="form-control" name="email" placeholder="Email address">
+            <div class="input-group" id="login-email-form">
+                <input type="email" class="form-control" name="identity" placeholder="Email address" required>
             </div>
             <div>
                 <input type="password" class="form-control pe-5" name="password" placeholder="Password" required>

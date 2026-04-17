@@ -559,9 +559,10 @@ class Ion_auth_model extends CI_Model
         $this->trigger_events('pre_change_password');
 
         $this->trigger_events('extra_where');
+        $identity_column = $this->session->userdata('login_identity_column') ?: $this->identity_column;
 
         $query = $this->db->select('id, password')
-            ->where($this->identity_column, $identity)
+            ->where($identity_column, $identity)
             ->limit(1)
             ->order_by('id', 'desc')
             ->get($this->tables['login_users']);
@@ -953,6 +954,8 @@ class Ion_auth_model extends CI_Model
             return FALSE;
         }
 
+        $identity_column = $this->session->userdata('login_identity_column') ?: $this->identity_column;
+
         $recheck = (NULL !== $this->config->item('recheck_timer', 'ion_auth')) ? $this->config->item('recheck_timer', 'ion_auth') : 0;
 
         if ($recheck !== 0) {
@@ -960,7 +963,7 @@ class Ion_auth_model extends CI_Model
             if ($last_login + $recheck < time()) {
                 $query = $this->db->select('id')
                     ->where([
-                        $this->identity_column => $this->session->userdata('identity'),
+                        $identity_column => $this->session->userdata('identity'),
                         'active' => '1'
                     ])
                     ->limit(1)
@@ -1830,6 +1833,7 @@ class Ion_auth_model extends CI_Model
 
         $session_data = [
             'identity'                 => $user->{$this->identity_column},
+            'login_identity_column'    => $this->identity_column,
             $this->identity_column     => $user->{$this->identity_column},
             'email'                    => $user->email,
             'user_id'                  => $user->id, //everyone likes to overwrite id so we'll use user_id
