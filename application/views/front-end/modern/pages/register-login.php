@@ -179,10 +179,8 @@ $signUpForm = 'style="display:none"';
                         </div>
                     </div>
                     <div class="mb-3">
-                        <a href="<?= base_url('#') ?>">
-                            <button type="submit"
-                                class="submit_btn btn Register-btn submit-btn"><?= label('login', 'Login') ?></button>
-                        </a>
+                        <button type="submit"
+                            class="submit_btn btn Register-btn submit-btn"><?= label('login', 'Login') ?></button>
                     </div>
                     <div class="d-flex justify-content-between forget-password">
                         <!-- <a id="forgot_password_link">

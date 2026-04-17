@@ -32,10 +32,8 @@
                 </span>
             </div>
             <div class="mb-3">
-                <a href="<?= base_url('') ?>">
-                    <button type="submit"
-                        class="submit_btn btn Register-btn submit-btn"><?= label('login', 'Login') ?></button>
-                </a>
+                <button type="submit"
+                    class="submit_btn btn Register-btn submit-btn"><?= label('login', 'Login') ?></button>
             </div>
             <div class="d-flex justify-content-between">
                 <div class="form-check">
