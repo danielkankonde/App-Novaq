@@ -37,7 +37,7 @@ class Brand_model extends CI_Model
 
     public function get_brands($id = NULL, $limit = '', $offset = '', $sort = 'row_order', $order = 'ASC', $has_child_or_item = 'true', $slug = '', $ignore_status = '', $seller_id = '', $status = '1')
     {
-        $this->db->select('b.id as brand_id , b.name as brand_name, b.slug as brand_slug, b.image as brand_img, b.status as brand_status');
+        $this->db->select('b.id as brand_id , b.name as brand_name, b.slug as brand_slug, b.image as brand_img, b.status as brand_status, b.row_order');
 
         $this->db->join('products p', ' p.brand = b.name', 'left');
         $this->db->group_start();
