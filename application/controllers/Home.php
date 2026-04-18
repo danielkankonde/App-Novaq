@@ -409,85 +409,73 @@ class Home extends CI_Controller
         $this->response['csrfName'] = $this->security->get_csrf_token_name();
         $this->response['csrfHash'] = $this->security->get_csrf_hash();
 
-        $identity = trim((string) $this->input->post('identity', true));
-        if ($identity === '') {
-            $identity = trim((string) $this->input->post('email', true));
-        }
+        // If this is an AJAX request, handle it as API
+        if ($this->input->is_ajax_request()) {
+            $identity = trim((string) $this->input->post('identity', true));
+            if (empty($identity)) {
+                $identity = trim((string) $this->input->post('email', true));
+            }
+            $password = trim((string) $this->input->post('password', true));
 
-        $_POST['identity'] = $identity;
-
-        // Front-end customer login now uses email + password only.
-        $this->form_validation->set_rules('identity', 'Email', 'trim|required|valid_email|xss_clean');
-        $this->form_validation->set_rules('password', str_replace(':', '', $this->lang->line('login_password_label')), 'required|xss_clean');
-
-        if ($this->form_validation->run() === TRUE) {
-            $tables = $this->config->item('tables', 'ion_auth');
-            $this->ion_auth->ion_auth_model->identity_column = 'email';
-            $res = $this->db->select('id')->where('email', $identity)->get($tables['login_users'])->result_array();
-            $user_data = fetch_details('users', ['email' => $identity]);
-
-            if (isset($user_data[0]['active']) && !empty($user_data) && $user_data[0]['active'] == 0) {
+            // Validate required fields
+            if (empty($identity) || empty($password)) {
                 $this->response['error'] = true;
-                $this->response['message'] = 'Account is Deactivated';
+                $this->response['message'] = 'Email and password are required';
                 echo json_encode($this->response);
-                return false;
+                exit();
             }
 
-            if (!empty($res)) {
-                // check to see if the user is logging in
-                // check for "remember me"
-                $remember = (bool) $this->input->post('remember');
-
-                if ($this->ion_auth->login($identity, $this->input->post('password'), $remember)) {
-
-                    //if the login is successful
-                    if (!$this->input->is_ajax_request()) {
-                        redirect('my-account', 'refresh');
-                    }
-                    $this->response['error'] = false;
-                    $this->response['message'] = $this->ion_auth->messages();
-                    echo json_encode($this->response);
-                } else {
-
-                    // if the login was un-successful
-                    $this->response['error'] = true;
-                    $this->response['message'] = 'Your email or password is incorrect';
-                    echo json_encode($this->response);
-                }
-            } else {
+            // Validate email format
+            if (!filter_var($identity, FILTER_VALIDATE_EMAIL)) {
                 $this->response['error'] = true;
-                $this->response['message'] = 'Your email or password is incorrect';
+                $this->response['message'] = 'Please enter a valid email address';
                 echo json_encode($this->response);
+                exit();
+            }
+
+            // Check if user exists and is active
+            $user_data = fetch_details('users', ['email' => $identity]);
+            
+            if (empty($user_data)) {
+                $this->response['error'] = true;
+                $this->response['message'] = 'Email or password is incorrect';
+                echo json_encode($this->response);
+                exit();
+            }
+
+            if (isset($user_data[0]['active']) && $user_data[0]['active'] == 0) {
+                $this->response['error'] = true;
+                $this->response['message'] = 'Your account has been deactivated. Please contact support.';
+                echo json_encode($this->response);
+                exit();
+            }
+
+            // Attempt login with Ion_auth
+            $this->ion_auth->ion_auth_model->identity_column = 'email';
+            $login_result = $this->ion_auth->login($identity, $password, (bool) $this->input->post('remember'));
+
+            if ($login_result) {
+                // Login successful
+                $this->response['error'] = false;
+                $this->response['message'] = 'Login successful! Redirecting...';
+                echo json_encode($this->response);
+                exit();
+            } else {
+                // Login failed
+                $this->response['error'] = true;
+                $this->response['message'] = 'Email or password is incorrect';
+                echo json_encode($this->response);
+                exit();
             }
         } else {
-
-
-            // the user is not logging in so display the login page
-            if (validation_errors()) {
-                $this->response['error'] = true;
-                $this->response['message'] = validation_errors();
-                echo json_encode($this->response);
-                return false;
-                exit();
-            }
-            if ($this->session->flashdata('message')) {
-                $this->response['error'] = false;
-                $this->response['message'] = $this->session->flashdata('message');
-                echo json_encode($this->response);
-                return false;
-                exit();
-            }
-
-            // set the flash data error message if there is one
-            $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-
+            // Non-AJAX request - show login page
+            $this->data['message'] = '';
             $this->data['identity'] = [
                 'name' => 'identity',
                 'id' => 'identity',
-                'type' => 'text',
+                'type' => 'email',
                 'value' => $this->form_validation->set_value('identity'),
             ];
-
             $this->data['password'] = [
                 'name' => 'password',
                 'id' => 'password',
