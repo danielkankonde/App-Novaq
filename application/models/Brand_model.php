@@ -35,30 +35,41 @@ class Brand_model extends CI_Model
     }
 
 
-    public function get_brands($id = NULL, $limit = '', $offset = '', $sort = 'row_order', $order = 'ASC', $has_child_or_item = 'true', $slug = '', $ignore_status = '', $seller_id = '', $status = '1')
+    public function get_brands($id = NULL, $limit = '', $offset = '', $sort = 'b.id', $order = 'ASC', $has_child_or_item = 'true', $slug = '', $ignore_status = '', $seller_id = '', $status = '1')
     {
-        $this->db->select('b.id as brand_id , b.name as brand_name, b.slug as brand_slug, b.image as brand_img, b.status as brand_status');
+    $this->db->select('
+        b.id as brand_id,
+        b.name as brand_name,
+        b.slug as brand_slug,
+        b.image as brand_img,
+        b.status as brand_status
+    ');
 
-        $this->db->join('products p', ' p.brand = b.name', 'left');
-        $this->db->group_start();
-        $this->db->where(['b.status ' => $status]);
-        $this->db->or_where(['b.name ' => ' p.brand '], NULL, FALSE);
-        $this->db->group_End();
-        $this->db->group_by('b.id');
+    // Jointure propre
+    $this->db->from('brands b');
+    $this->db->join('products p', 'p.brand = b.name', 'left');
 
-        if (!empty($limit) || !empty($offset)) {
-            $this->db->offset($offset);
-            $this->db->limit($limit);
-        }
+    // Condition propre
+    $this->db->group_start();
+    $this->db->where('b.status', $status);
+    $this->db->or_where('p.brand IS NOT NULL', NULL, FALSE);
+    $this->db->group_end();
 
-        $this->db->order_by($sort, $order);
+    // GROUP BY correct
+    $this->db->group_by('b.id');
 
-        $parent = $this->db->get('brands b');
-        $brands = $parent->result();
-        $count_res = $this->db->count_all_results('brands b');
-        $i = 0;
+    // LIMIT / OFFSET
+    if (!empty($limit)) {
+        $this->db->limit($limit, $offset);
+    }
 
-        return  json_decode(json_encode($brands), 1);
+    // ⚠️ IMPORTANT : tri corrigé
+    $this->db->order_by('b.id', $order);
+
+    // Exécution
+    $query = $this->db->get();
+
+    return $query->result_array();
     }
 
 
